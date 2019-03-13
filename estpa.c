@@ -14,14 +14,6 @@ template <class T> void copyvecdata(T * srcdata, long len, int * desdata, int& n
   }
 
   long i;
-
-  //note: originally I added 0.5 before rounding, however seems the negative numbers and
-  //      positive numbers are all rounded towarded 0; hence int(-1+0.5)=0 and int(1+0.5)=1;
-  //      This is unwanted because I need the above to be -1 and 1.
-  // for this reason I just round with 0.5 adjustment for positive and negative differently
-
-  //copy data
-  //int minn,maxx;
   if (srcdata[0]>0)
     maxx = minn = int(srcdata[0]+0.5);
   else
@@ -86,7 +78,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     nstate1 = MaxGrayLevel;
     if (MaxGrayLevel<=1)
     {
-      printf("The argument #state is invalid. This program will decide #state itself.\n");
+      printf("The argument #state is invalid. ");
       b_findstatenum = 1;
     }
   }
@@ -130,7 +122,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     ha[vec1[i]] += 1;
   }
 
-  //return the probabilities, otherwise return count numbers
+  //return the probabilities
   if(b_returnprob)
   {
     for (i=0; i<nstate1;i++)
@@ -139,27 +131,3 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     }
   }
 
-  //return more information
-  if (nlhs>=2)  //the second return value is the state list
-  {
-    plhs[1] = mxCreateDoubleMatrix(nstate1,1,mxREAL);
-    double * pstate = (double *)mxGetPr(plhs[1]);
-    for (i=0;i<nstate1;i++)
-      pstate[i] = minn + i;
-  }
-
-  if (nlhs>=3) //the third return value is the cumsum prob list
-  {
-    plhs[2] = mxCreateDoubleMatrix(nstate1,1,mxREAL);
-    double * pcumsum = (double *)mxGetPr(plhs[2]);
-    pcumsum[0] = ha[0];
-    for (i=1;i<nstate1;i++)
-      pcumsum[i] = pcumsum[i-1] + ha[i];
-  }
-
-  //free memory
-  if (vec1) delete []vec1;
-
-
-  return;
-}
