@@ -1,11 +1,11 @@
-//#include "miinclude.h"
-#include<iostream>
-#include<math.h>
-using namespace std;
+//calculate the conditional entropy H(X|Y)
+
+#include "miinclude.h"
+
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   if(nrhs != 2 && nrhs!=1)
-    mexErrMsgTxt("Usage [mutual_info] = progname(jointprob_table, marginprob_2). The last two inputs are optional.");
+    mexErrMsgTxt("The last two inputs are optional.");
   if(nlhs > 1)
     mexErrMsgTxt("Too many output argument <mutual_info>.");
 
@@ -46,7 +46,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     }
   }
 
-  muInf /= log(2);
+  muInf /= log(2.000000);
 
   plhs[0] = mxCreateDoubleMatrix(1,1, mxREAL);
   *mxGetPr(plhs[0]) = muInf;
