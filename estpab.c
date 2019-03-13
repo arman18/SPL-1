@@ -188,8 +188,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   for (i=0;i<len1;i++)
   {
-
-
     hab2d[vec2[i]][vec1[i]] += 1;
   }
 
