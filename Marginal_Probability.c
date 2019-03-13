@@ -32,7 +32,6 @@ template <class T> void copyvecdata(T * srcdata, long len, int * desdata, int& n
   }
   //printf("\n");
 
-  //make the vector data begin from 0 (i.e. 1st state)
   for (i=0;i<len;i++)
   {
     desdata[i] -= minn;
@@ -104,7 +103,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   if (nstate1<nrealstate1)
   {
     nstate1 = nrealstate1;
-    //printf("First vector #state = %i\n",nrealstate1);
   }
 
   //generate the marginal-distribution list
