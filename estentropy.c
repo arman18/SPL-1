@@ -1,11 +1,13 @@
+//calculate the entropy of a scalar variable 
+
 #include "miinclude.h"
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
   if(nrhs!=1)
-    mexErrMsgTxt("Usage [entropy] = progname(marginprob). .");
+    mexErrMsgTxt("err");
   if(nlhs > 1)
-    mexErrMsgTxt("Too many output argument <entropy>.");
+    mexErrMsgTxt("Too many output argument");
 
   double *pa = mxGetPr(prhs[0]);
   long totaln = (long)mxGetM(prhs[0])*mxGetN(prhs[0]);
@@ -14,10 +16,16 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   double entropy = 0.0;
   for (long i=0;i<totaln;i++)
   {
-    double curp = pa[i];
-    if (curp<0) {printf("Negative Probability!! Wrong data.\n");}
-    sum += curp;
-    if (curp!=0) {entropy -= curp*log(curp);}
+    double val = pa[i];
+    if (val<0) 
+    {
+      printf("Negative Probability!! Wrong data.\n");
+    }
+    sum += val;
+    if (val!=0) 
+    {
+      entropy -= val*log(val);
+    }
   }
 
   if (sum-1>1e-10)
@@ -32,3 +40,4 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   return;
 }
+
