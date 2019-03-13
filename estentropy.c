@@ -1,20 +1,3 @@
-//=========================================================
-//
-//This is a prog in the MutualInfo 0.9 package written by
-// Hanchuan Peng.
-//
-//Disclaimer: The author of program is Hanchuan Peng
-//      at <penghanchuan@yahoo.com> and <phc@cbmv.jhu.edu>.
-//
-//The CopyRight is reserved by the author.
-//
-//Last modification: April/19/2002
-//
-//========================================================
-//
-//calculate the entropy of a scalar variable 
-//by Hanchuan Peng
-//April/2002
 
 #include "miinclude.h"
 
