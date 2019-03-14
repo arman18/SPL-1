@@ -10,7 +10,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   if(nlhs > 1)
     mexErrMsgTxt("Too many output argument <jointentropy>.");
 
-  //check if parameters are correct
 
   long i,j;
 
@@ -42,8 +41,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 
   plhs[0] = mxCreateDoubleMatrix(1,1, mxREAL);
   *mxGetPr(plhs[0]) = muInf;
-
-  //free memory
+	
   if(pab2d){delete []pab2d;}
 
   return;
