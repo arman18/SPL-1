@@ -28,10 +28,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     }
   }
 
-  if (sum-1>1e-10)
-  {
-    printf("Dubious data! Sum is not 1.\n");
-  }
 
   entropy /= log(2.0000);
 
