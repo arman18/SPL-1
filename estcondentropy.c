@@ -9,7 +9,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   if(nlhs > 1)
     mexErrMsgTxt("Too many output argument <mutual_info>.");
 
-  //check if parameters are correct
 
   long i,j;
 
@@ -41,7 +40,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
       if (pab2d[j][i]!=0 && pb[j]!=0)
       {
 	muInf += pab2d[j][i] * log(pb[j]/pab2d[j][i]);
-// 	printf("%f %fab %fa %fb\n",muInf,pab2d[j][i]/p1[i]/p2[j],p1[i],p2[j]);
       }
     }
   }
@@ -51,7 +49,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   plhs[0] = mxCreateDoubleMatrix(1,1, mxREAL);
   *mxGetPr(plhs[0]) = muInf;
 
-  //free memory
   if(pab2d){delete []pab2d;}
 
   return;
