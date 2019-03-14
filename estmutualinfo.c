@@ -1,12 +1,4 @@
 // calculate the mutual information based on the probabilities
-// through a probability based method
-// MI = sum(p(a,b)log(p(a,b)/p(a)/p(b)))
-//
-// function mival = estmutualinfo(pab,pa,pb,displayflag)
-//input parameters:  pab--the joint probility density of model and image intensity
-//                   pa--marign probility density of the model
-//                   pb--marign probility density of the model
-//output parameters: hab-- the mutual information
 
 #include "miinclude.h"
 
@@ -24,12 +16,10 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   double *pab = mxGetPr(prhs[0]);//take all 2d data to 1d append colum by colum
   long pabhei = mxGetM(prhs[0]);//number of row
   long pabwid = mxGetN(prhs[0]);//number of colum
-  //printf("pabhei: %li pabwid: %li ",pabhei,pabwid);
-  //for(int i=0;i<6;i++) printf("%f ", pab[i]);
+
   double **pab2d = new double * [pabwid];
   for(j=0;j<pabwid;j++)//because pab has colum by colum data
     pab2d[j] = pab + (long)j*pabhei;
-  //for(int i=0;i<2;i++) printf("%f ", pab2d[1][i]);//print 4.00 0.000
   double *p1,*p2;
   long p1len,p2len;
   int b_findmarginalprob = 0;
@@ -107,7 +97,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   muInf /= log(2.0000);
   mInf[0] = muInf;
 
-  //free memory
   if(pab2d){delete []pab2d;}
   if(b_findmarginalprob!=0)
   {
