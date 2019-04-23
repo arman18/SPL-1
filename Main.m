@@ -57,6 +57,98 @@ c_acc =0;
 % data = dlmread('BreastTissue.txt');
 % file = 'BreastTissue.txt';
 % [pathstr,name,ext] = fileparts(file);
+% ------7------
+% dim=8 ;
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('pima-indians-diabetes.data');
+% file = 'pima-indians-diabetes.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----8-------
+% dim=34 ;
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('ionosphere.data');
+% file = 'ionosphere.txt';
+% [pathstr,name,ext] = fileparts(file);
+% ------9------
+% dim=8 ;
+% nclass = 10;
+% clabel = [1 2 3 4 5 6 7 8 9 10];
+% data = dlmread('yeast.data');
+% file = 'yeast.txt';
+% [pathstr,name,ext] = fileparts(file);
+% ------10------
+dim=90 ;
+nclass = 15;
+clabel = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15];
+data = dlmread('movement_libras.data');
+file = 'movement_libras.txt';
+[pathstr,name,ext] = fileparts(file);
+% ------11------
+% dim=4 ;
+% nclass = 3;
+% clabel = [1 2 3];
+% data = dlmread('iris.data');
+% file = 'iris.txt';
+% [pathstr,name,ext] = fileparts(file);
+% ------12------
+% dim=22 ;
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('Parkinsons.txt');
+% file = 'Parkinsons.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----13-------
+% dim=20 ;
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('German.txt');
+% file = 'German.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----14-------
+% dim=278 ;
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('arrhythmia_formatted.txt');
+% file = 'arrhythmia_formatted.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----15-------
+% dim=6 ;
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('Liver.txt');
+% file = 'Liver.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----16-------
+% dim=56 ;
+% nclass = 3;
+% clabel = [1 2 3];
+% data = dlmread('Lung_Cancer.txt');
+% file = 'Lung_Cancer.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----17-------
+% dim=9703 ;
+% nclass = 9;
+% clabel = [1 2 3 4 5 6 7 8 9];
+% data = dlmread('nci.txt');
+% file = 'nci.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----18-------
+% dim=57 ;
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('Spambase.txt');
+% file = 'Spambase.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----19-------
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('breast.txt');
+% file = 'breast.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----20-------
+
 
 fid = fopen('result_new.txt', 'a');
 fprintf(fid,'\nDataset: %s\n', name);
