@@ -148,7 +148,90 @@ file = 'movement_libras.txt';
 % file = 'breast.txt';
 % [pathstr,name,ext] = fileparts(file);
 % -----20-------
-
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('heart.txt');
+% file = 'heart.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----21-------
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('madelon.txt');
+% file = 'madelon.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----22-------
+% nclass = 7;
+% clabel = [1 2 3 4 5 6 7];
+% data = dlmread('steel.txt');
+% file = 'steel.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----23-------
+% nclass = 10;
+% clabel = [1 2 3 4 5 6 7 8 9 10];
+% data = dlmread('Semeion.txt');
+% file = 'Semeion.txt';
+% [pathstr,name,ext] = fileparts(file);
+% ------24------
+% nclass = 3;
+% clabel = [1 2 3];
+% data = dlmread('waveform.txt');
+% file = 'waveform.txt';
+% [pathstr,name,ext] = fileparts(file);
+% ------25------
+% nclass = 2;%LOO
+% clabel = [1 2];
+% data = dlmread('dbworld_subjects.txt');
+% file = 'dbworld_subjects.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----26-------
+% nclass = 2; %LOO
+% clabel = [1 2];
+% data = dlmread('dbworld_bodies.txt');
+% file = 'dbworld_bodies.txt';
+% [pathstr,name,ext] = fileparts(file);
+% ----27--------
+% nclass = 10;
+% clabel = [1 2 3 4 5 6 7 8 9 10];
+% data = dlmread('Cardio.txt');
+% file = 'Cardio.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----28-------
+% nclass = 9; %LOO
+% clabel = [1 2 3 4 5 6 7 8 9];
+% data = dlmread('lymphoma.txt');
+% file = 'lymphoma.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----29-------
+% nclass = 7;
+% clabel = [1 2 3 4 5 6 7];
+% data = dlmread('Segment.txt');
+% file = 'Segment.txt';
+% [pathstr,name,ext] = fileparts(file);
+% ------30------
+% nclass = 2;
+% clabel = [1 2];
+% data = dlmread('musk.txt');
+% file = 'musk.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----31-------
+% nclass = 2; %LOO
+% clabel = [1 2];
+% data = dlmread('leukemia.txt');
+% file = 'leukemia.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----32-------
+% nclass = 2; %LOO
+% clabel = [1 2];
+% data = dlmread('colon.txt');
+% file = 'colon.txt';
+% [pathstr,name,ext] = fileparts(file);
+% -----33-------
+% nclass = 5;
+% clabel = [1 2 3 4 5];
+% data = dlmread('Lung.txt');
+% file = 'Lung.txt';
+% [pathstr,name,ext] = fileparts(file);
+%--------complete data segment-----------
 
 fid = fopen('result_new.txt', 'a');
 fprintf(fid,'\nDataset: %s\n', name);
