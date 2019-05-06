@@ -247,3 +247,44 @@ for ii=1:size(xa,2)
     end
 end
 
+if count>1
+    othersData(:,temp1)=[];
+end
+clearvars temp1 count ;
+
+classData = data(:, 1);
+[m, dim] = size(othersData);
+
+opts= struct;
+opts.att_1split= 2;
+opts.quaztization_level= 5;
+opts.dim= dim;
+
+if LOO==1
+    acc=0;
+    
+    
+    for i = 1 : size(othersData,1)
+        ind=1:size(othersData,1);
+        ind=ind(ind~=i);
+        tr_fea = othersData(ind,:);
+        tr_label = classData(ind,:);
+        ts_fea = othersData(i,:);
+        ts_label = classData(i,:);
+        
+        [selectedFeatures, qua]= selectFeatures(tr_fea, tr_label, max_qua_level);
+        aa{i}=[selectedFeatures ; qua];
+        
+        sorted_fea = sort(selectedFeatures,2);
+        featidx(i,:)=sorted_fea(1:1);
+        
+         newtr_fea = zeros((size(othersData,1)-1), size(selectedFeatures,2));
+        newts_fea = zeros(1,size(selectedFeatures,2));
+        
+        for j = 1:length(selectedFeatures)
+            [newtr_fea(:, j), edges] = nowquantizeMI_random(tr_fea(:, selectedFeatures(j)), qua(j));
+            newts_fea(:, j) = testquantizeMI_random(ts_fea(:, selectedFeatures(j)), edges);
+        end
+        
+        tr_fea=newtr_fea;
+        ts_fea= newts_fea;
