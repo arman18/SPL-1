@@ -2,7 +2,7 @@ clear all; close all; clc;
 
 
 addpath('Libsvm/matlab');   % Libsvm package is used
-addpath('D:\MI_FINAL\mDSMwithout-MI-editing\mi');
+addpath('E:\mDSMwithout-MI-editing\mi');
 
 cc = power(2,-5);
 number_neighbours=5;
@@ -232,28 +232,26 @@ file = 'movement_libras.txt';
 % file = 'Lung.txt';
 % [pathstr,name,ext] = fileparts(file);
 %--------complete data segment-----------
-
-fid = fopen('result_new.txt', 'a');
-fprintf(fid,'\nDataset: %s\n', name);
-fclose(fid);
-xa = data(:, 2:end);
-X_tr=xa;
+% fid = fopen('result_new.txt', 'a');
+% fprintf(fid,'\nDataset: %s\n', name);
+% fclose(fid);
+onlyData = data(:, 2:end);
+X_tr=onlyData;
 % tic
 count=1;
-for ii=1:size(xa,2)
-    if length(unique(xa(:,ii)))==1
+for ii=1:size(onlyData,2)
+    if length(unique(onlyData(:,ii)))==1
         temp1(count)=ii;
         count=count+1;
     end
 end
-
 if count>1
-    othersData(:,temp1)=[];
+    onlyData(:,temp1)=[];
 end
 clearvars temp1 count ;
 
 classData = data(:, 1);
-[m, dim] = size(othersData);
+[m, dim] = size(onlyData);
 
 opts= struct;
 opts.att_1split= 2;
@@ -264,12 +262,12 @@ if LOO==1
     acc=0;
     
     
-    for i = 1 : size(othersData,1)
-        ind=1:size(othersData,1);
+    for i = 1 : size(onlyData,1)
+        ind=1:size(onlyData,1);
         ind=ind(ind~=i);
-        tr_fea = othersData(ind,:);
+        tr_fea = onlyData(ind,:);
         tr_label = classData(ind,:);
-        ts_fea = othersData(i,:);
+        ts_fea = onlyData(i,:);
         ts_label = classData(i,:);
         
         [selectedFeatures, qua]= selectFeatures(tr_fea, tr_label, max_qua_level);
@@ -278,7 +276,7 @@ if LOO==1
         sorted_fea = sort(selectedFeatures,2);
         featidx(i,:)=sorted_fea(1:1);
         
-         newtr_fea = zeros((size(othersData,1)-1), size(selectedFeatures,2));
+         newtr_fea = zeros((size(onlyData,1)-1), size(selectedFeatures,2));
         newts_fea = zeros(1,size(selectedFeatures,2));
         
         for j = 1:length(selectedFeatures)
@@ -288,3 +286,131 @@ if LOO==1
         
         tr_fea=newtr_fea;
         ts_fea= newts_fea;
+        
+        model2 = fitcknn(tr_fea,tr_label);
+        pred_val2 = predict(model2,ts_fea);
+        
+        model1 = fitctree(tr_fea, tr_label);
+        pred_val1 = predict(model1, ts_fea);       
+        
+        
+        c_chosen(1) = 1;
+        options = [ '-s 0 -t 0 ' ' -c ' num2str(cc(c_chosen(1)))];     
+
+        model = svmtrain(double(tr_label), sparse(tr_fea), options);
+        clear tr_fea;
+        [C, Acc, d2p] = svmpredict(double(ts_label), sparse(ts_fea), model);
+        clear ts_fea;
+        pred_val=C;
+ 
+        acc = (pred_val==classData(i));
+        acc1 = (pred_val1==classData(i));
+        acc2 = (pred_val2==classData(i));
+        
+        acc_f(i)= acc;
+        acc_f1(i)= acc1;
+        acc_f2(i)= acc2;
+        
+        selected = size(selectedFeatures,2)
+        select(i) = selected ;
+        
+        fprintf('Iter---> %d of %d: accu: %f\tsel: %f\tstability: %f\tc_avg_stabili: %f\n', i,size(onlyData,1),acc,selected,stability,ss/(i-1));
+        fid = fopen('result_new.txt', 'a');
+        fprintf(fid,'Iter---> %d of %d: accu: %f\tsel: %f\tstability: %f\tc_avg_stabili: %f\n', i,size(onlyData,1), acc,selected,stability,ss/(i-1));
+        fclose(fid);
+        
+    end
+
+%     fid = fopen('result_new.txt', 'a');
+%     fprintf('avg accu(svm): %f\tavg accu(tree): %f\tavg accu(k_nn): %f\tsel: %f\tinfo_stabili: %f\n', mean(acc_f),mean(acc_f1),mean(acc_f2), mean(select),ss/(size(onlyData,1)-1));
+%     fprintf(fid, 'avg accu: %f\tsel: %f\tinfo_stabili: %f\n', mean(acc_f), mean(select),ss/(size(onlyData,1)-1));
+%     fclose(fid);
+else
+    for foldIteration=1:no_of_fold
+        tic
+        tr_idx = [];
+        ts_idx = [];
+        total =0;
+        for classIteration = 1:nclass,
+            
+            idx_of_clsIteration = find(classData == clabel(classIteration));
+            num = length(idx_of_clsIteration);
+            rng(foldIteration+classIteration);
+            idx_rand = randperm(num);
+            tr_num=size(idx_of_clsIteration,1)-ceil(size(idx_of_clsIteration,1)/no_of_fold);
+            total=total+tr_num;
+            if num > tr_num + ts_num_max
+                tr_idx = [tr_idx; idx_of_clsIteration(idx_rand(1:tr_num))];
+                ts_idx = [ts_idx; idx_of_clsIteration(idx_rand(tr_num+1:tr_num+ts_num_max))];
+            else
+                tr_idx = [tr_idx; idx_of_clsIteration(idx_rand(1:tr_num))];
+                ts_idx = [ts_idx; idx_of_clsIteration(idx_rand(tr_num+1:end))];
+            end
+        end
+        tr_fea = zeros(length(tr_idx), dim);
+        tr_label = zeros(length(tr_idx), 1);
+        ts_fea = zeros(length(ts_idx), dim);
+        ts_label = zeros(length(ts_idx), 1);
+        tr_fea = onlyData(tr_idx,:);
+        tr_label = classData(tr_idx);
+        ts_fea = onlyData(ts_idx,:);
+        ts_label = classData(ts_idx);
+        [selectedFeatures, qua]= selectFeatures(tr_fea, tr_label, max_qua_level);
+        aa{foldIteration}=[selectedFeatures ; qua];
+        
+        sorted_fea = sort(selectedFeatures,2);
+        featidx{foldIteration,:}=sorted_fea(1:end);
+        
+        newtr_fea = zeros(length(tr_idx), size(selectedFeatures,2));
+        newts_fea = zeros(length(ts_idx),size(selectedFeatures,2));
+        
+        for j = 1:length(selectedFeatures)
+            [newtr_fea(:, j), edges] = nowquantizeMI_random(tr_fea(:, selectedFeatures(j)), qua(j));
+            newts_fea(:, j) = testquantizeMI_random(ts_fea(:, selectedFeatures(j)), edges);
+        end
+        
+        tr_fea=newtr_fea;
+        ts_fea= newts_fea;
+
+        model2 = fitcknn(tr_fea,tr_label);
+        pred_val2 = predict(model2,ts_fea);
+
+        model1 = fitctree(tr_fea, tr_label);
+        pred_val1 = predict(model1, ts_fea);
+        
+        c_chosen(1) = 1;
+        options = [ '-t 0' ' -c 1'  ];      
+        
+        model = svmtrain(double(tr_label), sparse(tr_fea), options);
+        clear tr_fea; 
+
+        
+        [C, Acc, d2p] = svmpredict(double(ts_label), sparse(ts_fea), model);
+        clear ts_fea;
+        pred_val=C;
+        
+        
+        accuracy = sum(eq(pred_val,ts_label(:,1)))/size(ts_label,1);
+        accuracy1 = sum(eq(pred_val1,ts_label(:,1)))/size(ts_label,1);
+        accuracy2 = sum(eq(pred_val2,ts_label(:,1)))/size(ts_label,1);
+        
+        EVAL = EvalMetric(ts_label,pred_val);
+        evals{foldIteration} = EVAL;
+        selected(foldIteration) = size(unique(selectedFeatures),2);
+        accuracies(foldIteration)= accuracy;
+        accuracies1(foldIteration)= accuracy1;
+        accuracies2(foldIteration)= accuracy2;
+        time = toc;
+%         fid = fopen('result_new.txt', 'a');
+%         fprintf(fid, 'Iter---> %d: accu: %f\tsel: %d\tstability: %f\tc_avg_stabili: %f\ttime: %f\n', foldIteration, accuracy,size(unique(selectedFeatures),2), stability,ss/(foldIteration-1),time);
+        fprintf('Iter---> %d: accu: %f\tselFea: %d\ttotalFea: %f\ttime: %f\n', foldIteration, accuracy,size(unique(selectedFeatures),2), total,time);
+%         fclose(fid);
+    end
+    Avg = getAvgEval(evals);
+%     fid = fopen('result_new.txt', 'a');
+    fprintf('avg accu(svm): %f\tavg accu(tree): %f\tavg accu(K-NN): %f\tsel: %f\tstability : %f\n', mean(accuracies), mean(accuracies1), mean(accuracies2),mean(selected),ss/9);
+%     fprintf(fid, 'avg accu: %f\tsel: %f\tstability : %f\n', mean(accuracies),mean(selected),ss/9);
+%     fclose(fid);
+end
+
+fclose('all');
