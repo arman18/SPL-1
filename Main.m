@@ -382,11 +382,6 @@ else
         tr_fea=newtr_fea;
         ts_fea= newts_fea;
 
-        model2 = fitcknn(tr_fea,tr_label);
-        pred_val2 = predict(model2,ts_fea);
-
-        model1 = fitctree(tr_fea, tr_label);
-        pred_val1 = predict(model1, ts_fea);
         
         c_chosen(1) = 1;
         options = [ '-t 0' ' -c 1'  ];      
@@ -417,6 +412,5 @@ else
         fclose(fid);
     end
 end
-
 
 fclose('all');
