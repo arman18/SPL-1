@@ -1,14 +1,12 @@
 clear all; close all; clc;
 
 
-addpath('Libsvm/matlab');   % Libsvm package is used
+addpath('Libsvm/matlab');   
 addpath('E:\mDSMwithout-MI-editing\mi');
 
 cc = power(2,-5);
 number_neighbours=5;
 
-
-%paramteres
 max_qua_level = 50;
 no_of_fold=10;
 ts_num_max = 5000;
@@ -79,19 +77,19 @@ c_acc =0;
 % file = 'yeast.txt';
 % [pathstr,name,ext] = fileparts(file);
 % ------10------
-dim=90 ;
-nclass = 15;
-clabel = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15];
-data = dlmread('movement_libras.data');
-file = 'movement_libras.txt';
-[pathstr,name,ext] = fileparts(file);
-% ------11------
-% dim=4 ;
-% nclass = 3;
-% clabel = [1 2 3];
-% data = dlmread('iris.data');
-% file = 'iris.txt';
+% dim=90 ;
+% nclass = 15;
+% clabel = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15];
+% data = dlmread('movement_libras.data');
+% file = 'movement_libras.txt';
 % [pathstr,name,ext] = fileparts(file);
+% ------11------
+dim=4 ;
+nclass = 3;
+clabel = [1 2 3];
+data = dlmread('iris.data');
+file = 'iris.txt';
+[pathstr,name,ext] = fileparts(file);
 % ------12------
 % dim=22 ;
 % nclass = 2;
@@ -232,9 +230,9 @@ file = 'movement_libras.txt';
 % file = 'Lung.txt';
 % [pathstr,name,ext] = fileparts(file);
 %--------complete data segment-----------
-% fid = fopen('result_new.txt', 'a');
-% fprintf(fid,'\nDataset: %s\n', name);
-% fclose(fid);
+fid = fopen('result_new.txt','a');
+fprintf(fid,'\nDataset: %s\n', name);
+fclose(fid);
 onlyData = data(:, 2:end);
 X_tr=onlyData;
 % tic
@@ -321,24 +319,19 @@ if LOO==1
         
     end
 
-%     fid = fopen('result_new.txt', 'a');
-%     fprintf('avg accu(svm): %f\tavg accu(tree): %f\tavg accu(k_nn): %f\tsel: %f\tinfo_stabili: %f\n', mean(acc_f),mean(acc_f1),mean(acc_f2), mean(select),ss/(size(onlyData,1)-1));
-%     fprintf(fid, 'avg accu: %f\tsel: %f\tinfo_stabili: %f\n', mean(acc_f), mean(select),ss/(size(onlyData,1)-1));
-%     fclose(fid);
 else
     for foldIteration=1:no_of_fold
         tic
         tr_idx = [];
         ts_idx = [];
         total =0;
-        for classIteration = 1:nclass,
+        for classIteration = 1:nclass
             
             idx_of_clsIteration = find(classData == clabel(classIteration));
             num = length(idx_of_clsIteration);
             rng(foldIteration+classIteration);
             idx_rand = randperm(num);
             tr_num=size(idx_of_clsIteration,1)-ceil(size(idx_of_clsIteration,1)/no_of_fold);
-            total=total+tr_num;
             if num > tr_num + ts_num_max
                 tr_idx = [tr_idx; idx_of_clsIteration(idx_rand(1:tr_num))];
                 ts_idx = [ts_idx; idx_of_clsIteration(idx_rand(tr_num+1:tr_num+ts_num_max))];
@@ -347,6 +340,13 @@ else
                 ts_idx = [ts_idx; idx_of_clsIteration(idx_rand(tr_num+1:end))];
             end
         end
+        total = length(tr_idx);
+        fid = fopen('result_new.txt', 'a');
+        fprintf(fid, '\nIter---> %d:\n Raw: ', foldIteration);
+        for it=1:length(tr_idx)
+            fprintf(fid,'%d ',tr_idx(it));
+        end
+        fclose(fid);
         tr_fea = zeros(length(tr_idx), dim);
         tr_label = zeros(length(tr_idx), 1);
         ts_fea = zeros(length(ts_idx), dim);
@@ -356,6 +356,16 @@ else
         ts_fea = onlyData(ts_idx,:);
         ts_label = classData(ts_idx);
         [selectedFeatures, qua]= selectFeatures(tr_fea, tr_label, max_qua_level);
+        
+        fid = fopen('result_new.txt', 'a');
+        fprintf(fid, '\n sel: ');
+        for it=1:length(selectedFeatures)
+            fprintf(fid,'%d ',selectedFeatures(it));
+        end
+        fprintf(fid, '\n Tst: ');
+        for it=1:length(ts_idx)
+            fprintf(fid,'%d ',ts_idx(it));
+        end
         aa{foldIteration}=[selectedFeatures ; qua];
         
         sorted_fea = sort(selectedFeatures,2);
@@ -386,31 +396,26 @@ else
 
         
         [C, Acc, d2p] = svmpredict(double(ts_label), sparse(ts_fea), model);
+        
+        fprintf(fid, '\n Ans: ');
+        for it=1:length(C)
+            fprintf(fid,'%d ',C(it));
+        end
+        fprintf(fid, '\n Exp: ');
+        for it=1:length(ts_idx)
+            fprintf(fid,'%d ',classData(ts_idx(it)));
+        end
         clear ts_fea;
         pred_val=C;
         
         
         accuracy = sum(eq(pred_val,ts_label(:,1)))/size(ts_label,1);
-        accuracy1 = sum(eq(pred_val1,ts_label(:,1)))/size(ts_label,1);
-        accuracy2 = sum(eq(pred_val2,ts_label(:,1)))/size(ts_label,1);
         
-        EVAL = EvalMetric(ts_label,pred_val);
-        evals{foldIteration} = EVAL;
-        selected(foldIteration) = size(unique(selectedFeatures),2);
-        accuracies(foldIteration)= accuracy;
-        accuracies1(foldIteration)= accuracy1;
-        accuracies2(foldIteration)= accuracy2;
         time = toc;
-%         fid = fopen('result_new.txt', 'a');
-%         fprintf(fid, 'Iter---> %d: accu: %f\tsel: %d\tstability: %f\tc_avg_stabili: %f\ttime: %f\n', foldIteration, accuracy,size(unique(selectedFeatures),2), stability,ss/(foldIteration-1),time);
-        fprintf('Iter---> %d: accu: %f\tselFea: %d\ttotalFea: %f\ttime: %f\n', foldIteration, accuracy,size(unique(selectedFeatures),2), total,time);
-%         fclose(fid);
+
+        fprintf(fid,'\naccu: %f\tselFea: %d\ttotalFea: %f\ttime: %f\n',accuracy*100,size(unique(selectedFeatures),2),total,time);
+        fclose(fid);
     end
-    Avg = getAvgEval(evals);
-%     fid = fopen('result_new.txt', 'a');
-    fprintf('avg accu(svm): %f\tavg accu(tree): %f\tavg accu(K-NN): %f\tsel: %f\tstability : %f\n', mean(accuracies), mean(accuracies1), mean(accuracies2),mean(selected),ss/9);
-%     fprintf(fid, 'avg accu: %f\tsel: %f\tstability : %f\n', mean(accuracies),mean(selected),ss/9);
-%     fclose(fid);
 end
 
 fclose('all');
