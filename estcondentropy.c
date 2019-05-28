@@ -8,7 +8,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   if(nlhs > 1)
     mexErrMsgTxt("Too many output argument <mutual_info>.");
 
-  //check if parameters are correct
 
   long i,j;
 
@@ -28,7 +27,6 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
   for(j=0;j<pabwid;j++)
     pab2d[j] = pab + (long)j*pabhei;
 
-  //calculate the conditional entropy
 
   double muInf = 0;
 
@@ -38,6 +36,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
     for (i=0;i<pabhei;i++) // should for pa
     {
       if (pab2d[j][i]!=0 && pb[j]!=0)
+	      
       {
 	muInf += pab2d[j][i] * log(pb[j]/pab2d[j][i]);
       }
