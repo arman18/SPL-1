@@ -27,37 +27,39 @@ void bubleSort(double *base,double *element,double length)
 
 void mexFunction(int nlhs, mxArray *plhs[], int nrhs, const mxArray *prhs[])
 {
-//     if(nrhs!=2) mexErrMsgTxt("invalid input");
+    if(nrhs!=2) mexErrMsgTxt("invalid input");
     double *data = mxGetPr(prhs[0]), *dataToBeSend;
     double length = mxGetNumberOfElements(prhs[0]);
     double *index = new double[length];
     double Q = mxGetScalar(prhs[1]);
-    double frequency = length/Q;
-    double tempfrequency = frequency;
+    int frequency = (int)length/Q;
+    
+    //correction: do not change original *data by sorting
+    
+    
+    double *tmpData = new double[length];
+    for(int i=0; i<length; i++)
+    {
+        tmpData[i] = data[i];
+    }
+    
     for(int i=0; i<length; i++) 
     {
         index[i] = i;
     }
     
-    bubleSort(data,index,length);
+    bubleSort(tmpData,index,length);
     
     plhs[0] = mxCreateDoubleMatrix(length,1,mxREAL);
     dataToBeSend = mxGetPr(plhs[0]);
-    int j=1;
-    for(int i=0; i<length;)
+    
+   for(int i=0; i<(Q-1)*frequency; i++)
+   {
+        dataToBeSend[(int)index[i]] = i/frequency + 1;
+   }
+    for(int i=(Q-1)*frequency;i<length; i++)
     {
-        if(tempfrequency<1)
-        {
-            j++;
-            if(j==Q) tempfrequency = length;
-            else tempfrequency = frequency;
-            continue;
-               
-        }
-        dataToBeSend[i] = j;
-        tempfrequency--;
-        i++;
+        dataToBeSend[(int)index[i]] = Q;
     }
-    bubleSort(index,dataToBeSend,length);
-
+    
 }
